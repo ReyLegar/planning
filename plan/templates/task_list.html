@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Задачи</title>
+    <style>
+
+button.delete {
+    background-color: red;
+        border: none;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        margin-left: 10px;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+}
+
+    a {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #ddd;
+        border-radius: 3px;
+        text-decoration: none;
+        color: #333;
+        margin-right: 10px;
+    }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+    .card-title {
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .card-body {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .card-status {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .card-status select {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        color: #333;
+        font-size: 16px;
+        margin-left: 10px;
+        padding: 5px;
+    }
+
+    .card-status button {
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        margin-left: 10px;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+</head>
+<body>
+    <h1>Задачи</h1>
+    {% for task in tasks %}
+        <div class="card">
+            <h2 class="card-title">{{ task.title }}</h2>
+            <p class="card-body">{{ task.description }}</p>
+            <div class="card-status">
+                <span>Статус:</span>
+                <form method="POST" action="{% url 'change_status' task.pk %}">
+                    {% csrf_token %}
+                    <select name="status">
+                        <option value="New" {% if task.status == "New" %} selected {% endif %}>Новая</option>
+                        <option value="In Progress" {% if task.status == "In Progress" %} selected {% endif %}>В процессе</option>
+                        <option value="Done" {% if task.status == "Done" %} selected {% endif %}>Выполнено</option>
+                    </select>
+                    <button type="submit">Поменять статус</button>
+                </form>
+                {% if task.status_updated_at %}
+                <span>Status updated at: {{ task.status_updated_at }}</span>
+                {% endif %}
+            </div>
+            <form method="POST" action="{% url 'delete_task' task.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="delete">Удалить</button>
+            </form>
+        </div>
+    {% endfor %}
+    <a href="{% url 'add_task' %}">Добавить задачу</a>
+</body>
+</html>
